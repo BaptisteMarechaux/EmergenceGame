@@ -88,7 +88,7 @@ public class GameManager : MonoBehaviour {
 		}
 		// Eau
 		if (seeWater && Water != null) {
-			if(Vector3.Distance(this.transform.position, Water.transform.position) > 5){
+			if(Vector3.Distance(this.transform.position, Water.transform.position) > 12){
 				destination = Water.transform.position;
 			}
 		}
@@ -112,7 +112,7 @@ public class GameManager : MonoBehaviour {
 			fightTime = 0;
 		}
 		// Déplacements
-		cube.transform.rotation = Quaternion.Lerp (cube.transform.rotation, Quaternion.identity, 1.5f * Time.deltaTime);
+		cube.transform.rotation = Quaternion.Lerp (cube.transform.rotation, Quaternion.identity, Quaternion.Angle(cube.transform.rotation, Quaternion.identity)/5 * Time.deltaTime);
 		cube.transform.position = Vector3.Lerp(cube.transform.position
 		                                       , destination, 1f*Time.deltaTime);
 	}
