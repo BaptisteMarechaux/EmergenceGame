@@ -5,6 +5,7 @@ public class SelectorScript : MonoBehaviour {
     public bool touchingWater;
 
     GameObject touchedWaterObject;
+	bool mustReset = false;
 
 	// Use this for initialization
 	void Start () {
@@ -46,10 +47,16 @@ public class SelectorScript : MonoBehaviour {
         {
             if (touchedWaterObject != null)
             {
-                touchedWaterObject.transform.parent.gameObject.SetActive(false);
+				touchedWaterObject.transform.parent.gameObject.transform.position = touchedWaterObject.transform.root.gameObject.transform.position;
+				touchedWaterObject.transform.parent.gameObject.SetActive (false);
             }
-            touchingWater = false;
-                    
+            touchingWater = false;    
         }
     }
+
+	void FixedUpdate(){
+		if (mustReset) {
+			mustReset = false;
+		}
+	}
 }

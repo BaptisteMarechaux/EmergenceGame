@@ -108,14 +108,20 @@ public class GameManager : MonoBehaviour {
 		}
 		// Eau
 		if (seeWater && Water != null) {
-			if(Vector3.Distance(this.transform.position, Water.transform.position) > 12){
-				destination = Water.transform.position;
-			}
-			if(Vector3.Distance(this.transform.position, Water.transform.position) < 5)
-			{
-				waterParticle.enableEmission = true; 
-			}else
+			if(Vector3.Distance(this.transform.position, Water.transform.position) > 20){
+				Water = null;
+				seeWater = false;
 				waterParticle.enableEmission = false;
+			}else{
+				if(Vector3.Distance(this.transform.position, Water.transform.position) > 12){
+					destination = Water.transform.position;
+				}
+				if(Vector3.Distance(this.transform.position, Water.transform.position) < 5)
+				{
+					waterParticle.enableEmission = true; 
+				}else
+					waterParticle.enableEmission = false;
+			}
 		}
 		// Combat
 		if (fight && friends.Count != 0) {

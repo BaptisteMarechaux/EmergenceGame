@@ -70,7 +70,8 @@ public class SunManager : MonoBehaviour {
                                 selectedPosition = SelectorPosition.position;
                                 selectedWaterSourceToPlace = i;
                                 Debug.Log(selectedWaterSourceToPlace);
-                                rainParticleTransform.position.Set(selectedPosition.x, rainParticle.transform.position.y, selectedPosition.z);
+								Debug.Log(selectedPosition.x.ToString());
+								rainParticleTransform.position = new Vector3(selectedPosition.x, rainParticleTransform.position.y, selectedPosition.z);
                                 rainParticle.Play();
                                 break;
                             }
