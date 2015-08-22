@@ -20,7 +20,12 @@ public class GameManager : MonoBehaviour {
 	public Material defaultMaterial;
 	public Material fightMaterial;
 	public Material deadMaterial;
+	public Material blockMaterial;
 	public GameObject model;
+	public ParticleSystem blood;
+	public ParticleSystem waterParticle;
+
+	float blockTime;
 
 	// Use this for initialization
 	void Start () {
@@ -33,6 +38,8 @@ public class GameManager : MonoBehaviour {
 		fightTime = 0;
 		deathTime = 0;
 		childTime = 0;
+		blood.enableEmission = false; 
+		waterParticle.enableEmission = false; 
 	}
 
 	// Update is called once per frame
@@ -43,6 +50,19 @@ public class GameManager : MonoBehaviour {
 			deathTime += 1f * Time.deltaTime;
 		if (deathTime > 6f)
 			Destroy (this.gameObject);
+		blockTime += 1f * Time.deltaTime;
+		if (blockTime > Random.Range (10.0f, 20.0f)) {
+			if(Random.Range(0.0f,1.0f) > 0.5f){
+				GameObject littleCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+				littleCube.AddComponent(typeof(Rigidbody));
+				littleCube.transform.localScale = new Vector3(Random.Range (0.2f, 2.0f), Random.Range (0.2f, 2.0f), Random.Range (0.2f, 2.0f));
+				littleCube.GetComponent<Rigidbody>().mass = 2 * (littleCube.transform.localScale.x + littleCube.transform.localScale.y +littleCube.transform.localScale.z);
+				littleCube.GetComponent<Renderer>().material = blockMaterial;
+				littleCube.AddComponent(typeof(BlockLife));
+				littleCube.transform.position = cube.transform.position;
+			}
+			blockTime = 0;
+		}
 	}
 
 	void Action(){
@@ -91,6 +111,11 @@ public class GameManager : MonoBehaviour {
 			if(Vector3.Distance(this.transform.position, Water.transform.position) > 12){
 				destination = Water.transform.position;
 			}
+			if(Vector3.Distance(this.transform.position, Water.transform.position) < 5)
+			{
+				waterParticle.enableEmission = true; 
+			}else
+				waterParticle.enableEmission = false;
 		}
 		// Combat
 		if (fight && friends.Count != 0) {
@@ -101,14 +126,19 @@ public class GameManager : MonoBehaviour {
 				destination = friends [index].transform.position;
 			}
 			model.GetComponent<Renderer> ().material = fightMaterial;
+			blood.enableEmission = true;
+			//Mort
 			if (Random.Range (0.0f, 1.0f) > 0.5f && fightTime > 2.5f) {
 				cube.tag = "Dead";
 				model.tag = "Dead";
 				model.GetComponent<Renderer> ().material = deadMaterial;
+				blood.enableEmission = false;
+				waterParticle.enableEmission = false;
 				/*Destroy (this);*/
 			}
 		} else {
 			model.GetComponent<Renderer> ().material = defaultMaterial;
+			blood.enableEmission = false;
 			fightTime = 0;
 		}
 		// Déplacements
