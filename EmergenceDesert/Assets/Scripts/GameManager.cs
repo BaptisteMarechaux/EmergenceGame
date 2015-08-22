@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour {
 	bool seeWater;
 	bool fight;
 	GameObject Water;
+	bool makeChild;
 	List<GameObject> friends = new List<GameObject>();
 
 	// Use this for initialization
@@ -17,10 +18,15 @@ public class GameManager : MonoBehaviour {
 		cube = this.gameObject;
 		destination = cube.transform.position;
 		seeWater = false;
+		fight = false;
+		makeChild = false;
 	}
 
 	// Update is called once per frame
 	void Update () {
+		if (makeChild = true && Random.Range(0.0f, 1.0f)> 0.5f) {
+			GameObject.Instantiate(this);
+		}
 		t += Random.Range(0.5f, 3f)*Time.deltaTime;
 		if (t > 2) {
 			destination = new Vector3 (cube.transform.position.x + Random.Range (-4.0f, 4.0f)
@@ -40,6 +46,7 @@ public class GameManager : MonoBehaviour {
 				destination = friends[index].transform.position;
 			}
 		}
+		cube.transform.rotation = Quaternion.Lerp (cube.transform.rotation, Quaternion.identity, 1.5f * Time.deltaTime);
 		cube.transform.position = Vector3.Lerp(cube.transform.position
 		        , destination, 1f*Time.deltaTime);
 	}
@@ -58,6 +65,11 @@ public class GameManager : MonoBehaviour {
 		if (friends.Count >= 5) {
 			fight = true;
 		}
+		if (friends.Count == 3) {
+			makeChild = true;
+		}else{
+			makeChild = false;
+		}
 	}
 
 	void OnTriggerExit(Collider collider){
@@ -73,6 +85,9 @@ public class GameManager : MonoBehaviour {
 		}
 		if (friends.Count < 5) {
 			fight = false;
+		}
+		if (friends.Count != 3) {
+			makeChild = false;
 		}
 	}
 }
