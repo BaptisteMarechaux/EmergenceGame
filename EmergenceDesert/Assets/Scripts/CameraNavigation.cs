@@ -24,5 +24,15 @@ public class CameraNavigation : MonoBehaviour {
             transform.Translate(h * runSpeed * Time.deltaTime, 0, v * runSpeed * Time.deltaTime);
         else
             transform.Translate(h * walkSpeed * Time.deltaTime, 0, v * walkSpeed * Time.deltaTime);
+
+        var d = Input.GetAxis("Mouse ScrollWheel");
+        if (d > 0f)
+        {
+            transform.Translate(Vector3.down * Time.deltaTime * 30, Space.Self);
+        }
+        else if (d < 0f)
+        {
+            transform.Translate(Vector3.up * Time.deltaTime * 30, Space.Self);
+        }
     }
 }
