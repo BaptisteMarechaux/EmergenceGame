@@ -29,6 +29,17 @@ public class SunManager : MonoBehaviour {
     float t;
     int layerMask = 1 << 9;
 
+    //Disparition
+    [SerializeField]
+    ParticleSystem smokeParticle;
+
+    [SerializeField]
+    bool canMakeDisappear;
+
+    [SerializeField]
+    SelectorScript selectorScript;
+
+
     // Use this for initialization
     void Start () {
         waterSourcesDispoText.text = "Sources Dispo : " + disponibleWaterSources;
@@ -42,36 +53,51 @@ public class SunManager : MonoBehaviour {
             //Make it rain
             rainParticle.Play();
         }
-        
-        if(Input.GetMouseButtonDown(0))
-        {
-            if(!startedPlacingWater)
-            {
-                if (disponibleWaterSources > 0)
-                {
-                    for (int i = 0; i < waterSources.Length; i++)
-                    {
-                        if (!waterSources[i].activeSelf)
-                        {
-                            startedPlacingWater = true;
-                            selectedPosition = SelectorPosition.position;
-                            selectedWaterSourceToPlace = i;
-                            rainParticle.gameObject.transform.position.Set(selectedPosition.x, rainParticle.transform.position.y, selectedPosition.z);
-                            rainParticle.Play();
-                            break;
-                        }
-                    }
-                    disponibleWaterSources--;
-                    waterSourcesDispoText.text = "Sources Dispo : " + disponibleWaterSources.ToString();
-                }
-                else
-                {
 
+        if(!selectorScript.touchingWater)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                if (!startedPlacingWater)
+                {
+                    if (disponibleWaterSources > 0)
+                    {
+                        for (int i = 0; i < waterSources.Length; i++)
+                        {
+                            if (!waterSources[i].activeSelf)
+                            {
+                                startedPlacingWater = true;
+                                selectedPosition = SelectorPosition.position;
+                                selectedWaterSourceToPlace = i;
+                                Debug.Log(selectedWaterSourceToPlace);
+                                rainParticleTransform.position.Set(selectedPosition.x, rainParticle.transform.position.y, selectedPosition.z);
+                                rainParticle.Play();
+                                break;
+                            }
+                        }
+                        disponibleWaterSources--;
+                        waterSourcesDispoText.text = "Sources Dispo : " + disponibleWaterSources.ToString();
+                    }
+                    else
+                    {
+
+                    }
                 }
+
+
             }
-            
-            
         }
+        else
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                selectorScript.Process();
+                disponibleWaterSources++;
+                waterSourcesDispoText.text = "Sources Dispo : " + disponibleWaterSources.ToString();
+            }
+                
+        }
+        
 
         if (startedPlacingWater)
         {
@@ -93,7 +119,7 @@ public class SunManager : MonoBehaviour {
             Debug.DrawLine(ray.origin, hit.point);
             //if (hit.transform == truc) ;
             SelectorPosition.position = new Vector3(hit.point.x, SelectorPosition.position.y, hit.point.z);
-            Debug.Log("Did Hit");
+            
         }
     }
 
