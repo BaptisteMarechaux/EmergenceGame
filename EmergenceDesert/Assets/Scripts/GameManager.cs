@@ -7,11 +7,15 @@ public class GameManager : MonoBehaviour {
 	GameObject cube;
 	Vector3 destination;
 	float t;
+	float childTime;
 	bool seeWater;
 	bool fight;
+	bool canMakeChild;
 	GameObject Water;
 	bool makeChild;
 	List<GameObject> friends = new List<GameObject>();
+	List<GameObject> listRemove = new List<GameObject> ();
+	public Material fightMaterial;
 
 	// Use this for initialization
 	void Start () {
@@ -20,12 +24,27 @@ public class GameManager : MonoBehaviour {
 		seeWater = false;
 		fight = false;
 		makeChild = false;
+		canMakeChild = true;
 	}
 
 	// Update is called once per frame
 	void Update () {
-		if (makeChild = true && Random.Range(0.0f, 1.0f)> 0.5f) {
+		if(listRemove.Count != 0)
+			listRemove.Clear ();
+		foreach (GameObject friend in friends) {
+			if(Vector3.Distance(cube.transform.position, friend.transform.position) > 2){
+				listRemove.Add(friend);
+			}
+		}
+		foreach (GameObject friend in listRemove) {
+			if(friends.Contains(friend))
+				friends.Remove(friend);
+		}
+		childTime += 1f*Time.deltaTime;
+		if (makeChild == true && Random.Range(0.0f, 1.0f)> 0.5f && childTime > 1f && canMakeChild) {
 			GameObject.Instantiate(this);
+			childTime = 0f;
+			canMakeChild = false;
 		}
 		t += Random.Range(0.5f, 3f)*Time.deltaTime;
 		if (t > 2) {
@@ -38,7 +57,6 @@ public class GameManager : MonoBehaviour {
 				destination = Water.transform.position;
 			}
 		}
-		Debug.Log (fight + friends.Count.ToString());
 		if (fight && friends.Count != 0) {
 			int index = Random.Range(0,friends.Count-1);
 			Debug.Log(index.ToString() + friends.Count.ToString());
@@ -56,16 +74,19 @@ public class GameManager : MonoBehaviour {
 			seeWater = true;
 			Water = collider.gameObject;
 		}
+
 	}
 
 	void OnCollisionEnter(Collision collision){
 		if (collision.collider.tag == "Character") {
 			friends.Add(collision.gameObject);
+
 		}
 		if (friends.Count >= 5) {
 			fight = true;
 		}
-		if (friends.Count == 3) {
+		if (friends.Count == 2) {
+
 			makeChild = true;
 		}else{
 			makeChild = false;
@@ -77,6 +98,7 @@ public class GameManager : MonoBehaviour {
 			seeWater = false;
 			Water = null;
 		}
+
 	}
 
 	void OnCollisionExit(Collision collision){
@@ -86,8 +108,8 @@ public class GameManager : MonoBehaviour {
 		if (friends.Count < 5) {
 			fight = false;
 		}
-		if (friends.Count != 3) {
-			makeChild = false;
+		if (friends.Count != 2) {
+			makeChild = false; 
 		}
 	}
 }
