@@ -50,6 +50,9 @@ public class SunManager : MonoBehaviour {
     [SerializeField]
     SelectorScript selectorScript;
 
+    [SerializeField]
+    GameObject ExitGameCanvas;
+
 
     // Use this for initialization
     void Start () {
@@ -60,6 +63,7 @@ public class SunManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+
 	    if(Input.GetKeyDown(KeyCode.R))
         {
             //Make it rain
@@ -155,7 +159,10 @@ public class SunManager : MonoBehaviour {
                 waterSources[selectedWaterSourceToPlace].transform.position = selectedPosition;
             }
         }
-
+        if(Input.GetKeyDown(KeyCode.Escape))
+        {
+            ExitGameCanvas.SetActive(true);
+        }
     }
 
     void FixedUpdate()
