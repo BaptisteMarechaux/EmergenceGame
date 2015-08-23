@@ -5,7 +5,6 @@ public class SelectorScript : MonoBehaviour {
     public bool touchingWater;
 
     GameObject touchedWaterObject;
-	bool mustReset = false;
 
 	// Use this for initialization
 	void Start () {
@@ -14,7 +13,7 @@ public class SelectorScript : MonoBehaviour {
 
     void OnCollisionStay(Collision col)
     {
-        Debug.Log(col.gameObject.name);
+        //Debug.Log(col.gameObject.name);
         if(col.gameObject.layer == 8) //On touche l'eau
         {
             touchingWater = true;
@@ -53,10 +52,4 @@ public class SelectorScript : MonoBehaviour {
             touchingWater = false;    
         }
     }
-
-	void FixedUpdate(){
-		if (mustReset) {
-			mustReset = false;
-		}
-	}
 }

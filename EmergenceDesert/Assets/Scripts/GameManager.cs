@@ -6,6 +6,8 @@ public class GameManager : MonoBehaviour {
 
 	GameObject cube;
 	Vector3 destination;
+	public GameObject Water;
+	public GameObject Food;
 	float t;
 	float childTime;
 	public float fightTime;
@@ -13,8 +15,8 @@ public class GameManager : MonoBehaviour {
 	bool seeWater;
 	bool fight;
 	bool canMakeChild;
-	GameObject Water;
 	bool makeChild;
+	bool eatFood;
 	public List<GameObject> friends = new List<GameObject>();
 	List<GameObject> listRemove = new List<GameObject> ();
 	public Material defaultMaterial;
@@ -24,6 +26,7 @@ public class GameManager : MonoBehaviour {
 	public GameObject model;
 	public ParticleSystem blood;
 	public ParticleSystem waterParticle;
+	public float lifeTime;
 
 	float blockTime;
 
@@ -40,19 +43,22 @@ public class GameManager : MonoBehaviour {
 		childTime = 0;
 		blood.enableEmission = false; 
 		waterParticle.enableEmission = false; 
+		lifeTime = 100f;
 	}
 
 	// Update is called once per frame
 	void FixedUpdate () {
+		// Mort
 		if (cube.tag != "Dead")
 			Action ();
 		else
 			deathTime += 1f * Time.deltaTime;
-		if (deathTime > 6f)
+		if (deathTime > 8f)
 			Destroy (this.gameObject);
+		// Création des blocks
 		blockTime += 1f * Time.deltaTime;
 		if (blockTime > Random.Range (10.0f, 20.0f)) {
-			if(Random.Range(0.0f,1.0f) > 0.5f){
+			if(Random.Range(0.0f,1.0f) > 0.4f){
 				GameObject littleCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
 				littleCube.AddComponent(typeof(Rigidbody));
 				littleCube.transform.localScale = new Vector3(Random.Range (0.2f, 2.0f), Random.Range (0.2f, 2.0f), Random.Range (0.2f, 2.0f));
@@ -86,7 +92,7 @@ public class GameManager : MonoBehaviour {
 		}
 		// Enfants
 		childTime += 1f*Time.deltaTime;
-		if (makeChild == true && Random.Range(0.0f, 1.0f)> 0.5f && childTime > 1.5f && canMakeChild && !fight) {
+		if (makeChild == true && Random.Range(0.0f, 1.0f)> 0.5f && childTime > 1.5f && canMakeChild && !fight && !eatFood) {
 			int proximityFriends = 0;
 			foreach (GameObject friend in friends) {
 				if(Vector3.Distance(cube.transform.position, friend.transform.position) < 2f){
@@ -133,8 +139,8 @@ public class GameManager : MonoBehaviour {
 			}
 			model.GetComponent<Renderer> ().material = fightMaterial;
 			blood.enableEmission = true;
-			//Mort
-			if (Random.Range (0.0f, 1.0f) > 0.5f && fightTime > 2.5f) {
+			// Mort
+			if (Random.Range (0.0f, 1.0f) > 0.4f && fightTime > 2f) {
 				cube.tag = "Dead";
 				model.tag = "Dead";
 				model.GetComponent<Renderer> ().material = deadMaterial;
@@ -147,16 +153,32 @@ public class GameManager : MonoBehaviour {
 			blood.enableEmission = false;
 			fightTime = 0;
 		}
+		// Nourriture
+		if (eatFood && Food != null) {
+			if(Vector3.Distance(this.transform.position, Food.transform.position) > 10f){
+				Food = null;
+				eatFood = false;
+			}else{
+				if(Vector3.Distance(this.transform.position, Food.transform.position) < 2f){
+					Food.GetComponent<FoodProperty>().life -= 1;
+				}
+				destination = Food.transform.position;
+			}
+		}
 		// Déplacements
 		cube.transform.rotation = Quaternion.Lerp (cube.transform.rotation, Quaternion.identity, Quaternion.Angle(cube.transform.rotation, Quaternion.identity)/5 * Time.deltaTime);
 		cube.transform.position = Vector3.Lerp(cube.transform.position
-		                                       , destination, 1f*Time.deltaTime);
+		                                       , destination, 0.5f*Time.deltaTime);
 	}
 
 	void OnTriggerEnter(Collider collider){
-		if(collider.name == "Water"){
+		if(collider.tag == "Water"){
 			seeWater = true;
 			Water = collider.gameObject;
+		}
+		if(collider.tag == "Food"){
+			eatFood = true;
+			Food = collider.gameObject;
 		}
 	}
 
@@ -181,6 +203,10 @@ public class GameManager : MonoBehaviour {
 		if(collider.name == "Water"){
 			seeWater = false;
 			Water = null;
+		}
+		if(collider.name == "Food"){
+			eatFood = false;
+			Food = null;
 		}
 	}
 

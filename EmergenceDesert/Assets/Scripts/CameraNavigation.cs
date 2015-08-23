@@ -12,8 +12,8 @@ public class CameraNavigation : MonoBehaviour {
 
     float v, h;
 
-	public bool scrollingDown = false;
-	public bool scrollingUp = false;
+	bool scrollingDown = false;
+	bool scrollingUp = false;
 	Vector3 destination = new Vector3 ();
 
 	// Use this for initialization

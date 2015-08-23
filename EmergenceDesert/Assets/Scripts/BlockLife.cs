@@ -7,7 +7,7 @@ public class BlockLife : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		lifeTime = Random.Range (20.0f, 30.0f);
+		lifeTime = Random.Range (15.0f, 30.0f);
 	}
 	
 	// Update is called once per frame

@@ -16,15 +16,23 @@ public class SunManager : MonoBehaviour {
     [SerializeField]
     GameObject[] waterSources;
 
+	[SerializeField]
+	GameObject[] foodSources;
+
     [SerializeField]
     int disponibleWaterSources;
+
+	[SerializeField]
+	int disponibleFoodSources;
 
     [SerializeField]
     Text waterSourcesDispoText;
 
     bool startedPlacingWater;
+	bool canPlacingWater;
     Vector3 selectedPosition;
     int selectedWaterSourceToPlace;
+	int selectedFoodSourceToPlace;
 
     float t;
     int layerMask = 1 << 9;
@@ -69,8 +77,8 @@ public class SunManager : MonoBehaviour {
                                 startedPlacingWater = true;
                                 selectedPosition = SelectorPosition.position;
                                 selectedWaterSourceToPlace = i;
-                                Debug.Log(selectedWaterSourceToPlace);
-								Debug.Log(selectedPosition.x.ToString());
+                                //Debug.Log(selectedWaterSourceToPlace);
+								//Debug.Log(selectedPosition.x.ToString());
 								rainParticleTransform.position = new Vector3(selectedPosition.x, rainParticleTransform.position.y, selectedPosition.z);
                                 rainParticle.Play();
                                 break;
@@ -87,6 +95,35 @@ public class SunManager : MonoBehaviour {
 
 
             }
+			else
+			{
+				if(Input.GetMouseButton(1)){
+					if (disponibleFoodSources > 0 && canPlacingWater)
+					{
+						for (int i = 0; i < foodSources.Length; i++)
+						{
+							if (!foodSources[i].activeSelf)
+							{
+								//startedPlacingFood = true;
+								selectedPosition = SelectorPosition.position;
+								selectedFoodSourceToPlace = i;
+								foodSources[selectedFoodSourceToPlace].SetActive(true);
+								//foodSources[selectedFoodSourceToPlace].transform.position = selectedPosition;
+								foodSources[selectedFoodSourceToPlace].transform.position = Camera.main.transform.position;
+								foodSources[selectedFoodSourceToPlace].GetComponent<Rigidbody>().AddForce(
+									new Vector3(selectedPosition.x-Camera.main.transform.position.x,
+								            selectedPosition.y-Camera.main.transform.position.y,
+								            selectedPosition.z-Camera.main.transform.position.z)*5, ForceMode.Impulse);
+								canPlacingWater = false;
+								break;
+							}
+						}
+						//disponibleWaterSources--;
+						//waterSourcesDispoText.text = "Sources Dispo : " + disponibleWaterSources.ToString();
+					}
+				}else
+					canPlacingWater = true;
+			}
         }
         else
         {
@@ -117,7 +154,7 @@ public class SunManager : MonoBehaviour {
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit, 500, layerMask))
         {
-            Debug.DrawLine(ray.origin, hit.point);
+            //Debug.DrawLine(ray.origin, hit.point);
             //if (hit.transform == truc) ;
             SelectorPosition.position = new Vector3(hit.point.x, SelectorPosition.position.y, hit.point.z);
             
