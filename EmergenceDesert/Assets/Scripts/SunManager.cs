@@ -53,17 +53,27 @@ public class SunManager : MonoBehaviour {
     [SerializeField]
     GameObject ExitGameCanvas;
 
+    float _timescaleInit;
+
 
     // Use this for initialization
     void Start () {
         waterSourcesDispoText.text = "Sources Available : " + disponibleWaterSources;
 		foodSourcesDispoText.text = "Food Available : " + foodSources.Length.ToString();
         t = 0;
+        _timescaleInit = Time.timeScale;
     }
 	
 	// Update is called once per frame
 	void Update () {
-
+        if (Input.GetKey(KeyCode.Space))
+        {
+            Time.timeScale = 3;
+        }
+        else
+        {
+            Time.timeScale = _timescaleInit;
+        }
 	    if(Input.GetKeyDown(KeyCode.R))
         {
             //Make it rain
