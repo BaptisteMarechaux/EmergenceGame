@@ -23,7 +23,7 @@ public class TutoManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        if (tutorialIndex != 1 && tutorialIndex != 2 && tutorialIndex!=5)
+        if (tutorialIndex != 1 && tutorialIndex != 2 && tutorialIndex!=4)
             sunManager.enabled = false;
         else
             sunManager.enabled = true;
