@@ -143,13 +143,13 @@ public class SunManager : MonoBehaviour {
                 
         }
         
-		int foods=0;
+		disponibleFoodSources = 0;
 		for (int i = 0; i < foodSources.Length; i++)
 		{
 			if (!foodSources[i].activeSelf)
-				foods++;
+				disponibleFoodSources++;
 		}
-		foodSourcesDispoText.text = "Sources Dispo : " + foods.ToString();
+		foodSourcesDispoText.text = "Sources Dispo : " + disponibleFoodSources.ToString();
 
         if (startedPlacingWater)
         {
