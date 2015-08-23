@@ -30,6 +30,9 @@ public class GameManager : MonoBehaviour {
 
 	float blockTime;
 
+    [SerializeField]
+    Animator animator;
+
 	// Use this for initialization
 	void Start () {
 		cube = this.gameObject;
@@ -111,6 +114,8 @@ public class GameManager : MonoBehaviour {
 			destination = new Vector3 (cube.transform.position.x + Random.Range (-4.0f, 4.0f)
 			                           , 1f, cube.transform.position.z + Random.Range (-4.0f, 4.0f));
 			t=0.0f;
+            animator.SetFloat("hazard", Random.Range(0.0f, 1f));
+            //Debug.Log(animator.GetFloat("hazard"));
 		}
 		// Eau
 		if (seeWater && Water != null) {
