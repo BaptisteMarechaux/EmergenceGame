@@ -27,6 +27,9 @@ public class GameManager : MonoBehaviour {
 	public ParticleSystem blood;
 	public ParticleSystem waterParticle;
 	public float lifeTime;
+	public CountScript countScript;
+	List<GameObject> nearBlocks = new List<GameObject>();
+	float buildTime;
 
 	float blockTime;
 
@@ -44,6 +47,7 @@ public class GameManager : MonoBehaviour {
 		fightTime = 0;
 		deathTime = 0;
 		childTime = 0;
+		buildTime = 0;
 		blood.enableEmission = false; 
 		waterParticle.enableEmission = false; 
 		lifeTime = 100f;
@@ -64,10 +68,11 @@ public class GameManager : MonoBehaviour {
 			if(Random.Range(0.0f,1.0f) > 0.4f){
 				GameObject littleCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
 				littleCube.AddComponent(typeof(Rigidbody));
-				littleCube.transform.localScale = new Vector3(Random.Range (0.2f, 2.0f), Random.Range (0.2f, 2.0f), Random.Range (0.2f, 2.0f));
+				littleCube.transform.localScale = new Vector3(Random.Range (0.3f, 2.0f), Random.Range (0.3f, 2.0f), Random.Range (0.3f, 2.0f));
 				littleCube.GetComponent<Rigidbody>().mass = 2 * (littleCube.transform.localScale.x + littleCube.transform.localScale.y +littleCube.transform.localScale.z);
 				littleCube.GetComponent<Renderer>().material = blockMaterial;
 				littleCube.AddComponent(typeof(BlockLife));
+				littleCube.tag = "Block";
 				littleCube.transform.position = cube.transform.position;
 			}
 			blockTime = 0;
@@ -75,6 +80,52 @@ public class GameManager : MonoBehaviour {
 	}
 
 	void Action(){
+		// Construction
+		if(listRemove.Count != 0)
+			listRemove.Clear ();
+		foreach(GameObject block in nearBlocks){
+			if(block != null && Vector3.Distance(cube.transform.position, block.transform.position) > 5f){
+				listRemove.Add(block);
+			}
+		}
+		foreach(GameObject block in listRemove){
+			if(nearBlocks.Contains(block))
+				nearBlocks.Remove(block);
+		}
+		if (nearBlocks.Count >= 4) {
+			buildTime += 1f*Time.deltaTime;
+			if(buildTime >= 2f){
+				if(listRemove.Count != 0)
+					listRemove.Clear ();
+				foreach(GameObject block in nearBlocks){
+					Destroy(block);
+					//listRemove.Add(block);
+				}/*
+				foreach(GameObject block in listRemove){
+					if(nearBlocks.Contains(block))
+						nearBlocks.Remove(block);
+					Destroy(block);
+				}*/
+				nearBlocks= new List<GameObject>();
+
+				/*GameObject littleCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+				littleCube.AddComponent(typeof(Rigidbody));
+				littleCube.transform.localScale = new Vector3(Random.Range (1.5f, 3.0f), Random.Range (1.5f, 3.0f), Random.Range (1.5f, 3.0f));
+				littleCube.GetComponent<Rigidbody>().mass = 2 * (littleCube.transform.localScale.x + littleCube.transform.localScale.y +littleCube.transform.localScale.z);
+				littleCube.GetComponent<Renderer>().material = blockMaterial;
+				littleCube.transform.position = cube.transform.position;*/
+				GameObject littleCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+				littleCube.transform.localScale = new Vector3(Random.Range (1f, 3f), Random.Range (0.01f, 0.1f), Random.Range (1f, 3f));
+				littleCube.transform.rotation = new Quaternion(0f,  1f, 0f, Mathf.PI * (Random.Range (0f, 360f))/180);
+				littleCube.GetComponent<Renderer>().material = new Material(blockMaterial);
+				littleCube.GetComponent<Renderer>().material.color = new Color(Random.Range (0.0f, 1f), Random.Range (0f, 1f), Random.Range (0f, 1f));
+				littleCube.AddComponent(typeof(BlockLife));
+				littleCube.transform.position = new Vector3(cube.transform.position.x, 0.1f, cube.transform.position.z);
+				buildTime = 0;
+				Debug.Log(nearBlocks.Count.ToString() + "  " + buildTime);
+			}
+		} else
+			buildTime = 0;
 		// Supprime ceux qui sont trop loin
 		if(listRemove.Count != 0)
 			listRemove.Clear ();
@@ -103,7 +154,8 @@ public class GameManager : MonoBehaviour {
 				}
 			}
 			if(proximityFriends >= 2){
-				GameObject.Instantiate(this);
+				GameManager newPerso = GameObject.Instantiate(this);
+				countScript.persoStock.Add(newPerso.gameObject);
 				childTime = 0f;
 				canMakeChild = false;
 			}
@@ -171,7 +223,11 @@ public class GameManager : MonoBehaviour {
 			}
 		}
 		// Déplacements
-		cube.transform.rotation = Quaternion.Lerp (cube.transform.rotation, Quaternion.identity, Quaternion.Angle(cube.transform.rotation, Quaternion.identity)/5 * Time.deltaTime);
+		cube.transform.rotation = Quaternion.Lerp (cube.transform.rotation, Quaternion.identity, Quaternion.Angle(cube.transform.rotation, Quaternion.identity)/1.5f * Time.deltaTime);
+		if (Quaternion.Angle (cube.transform.rotation, Quaternion.identity) > 20f) {
+			//cube.transform.rotation = Quaternion.Lerp (cube.transform.rotation, Quaternion.identity, Quaternion.Angle(cube.transform.rotation, Quaternion.identity)/5 * Time.deltaTime);
+			Debug.Log(this.gameObject.name);
+		}
 		cube.transform.position = Vector3.Lerp(cube.transform.position
 		                                       , destination, 0.5f*Time.deltaTime);
 	}
@@ -184,6 +240,10 @@ public class GameManager : MonoBehaviour {
 		if(collider.tag == "Food"){
 			eatFood = true;
 			Food = collider.gameObject;
+		}
+		if(collider.tag == "Block"){
+			if(!nearBlocks.Contains(collider.gameObject))
+				nearBlocks.Add(collider.gameObject);
 		}
 	}
 
@@ -212,6 +272,10 @@ public class GameManager : MonoBehaviour {
 		if(collider.name == "Food"){
 			eatFood = false;
 			Food = null;
+		}
+		if(collider.tag == "Block"){
+			if(nearBlocks.Contains(collider.gameObject))
+				nearBlocks.Remove(collider.gameObject);
 		}
 	}
 
