@@ -40,6 +40,13 @@ public class TutoManager : MonoBehaviour {
         }
         mainCam.transform.position = Vector3.Lerp(mainCam.transform.position, new Vector3(tutorialPositions[tutorialIndex].position.x, mainCam.transform.position.y, tutorialPositions[tutorialIndex].position.z-5), 10*Time.deltaTime);
         
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            if(tutorialIndex == 5)
+            {
+                Application.LoadLevel(1);
+            }
+        }
 	}
 
     public void nextPart()

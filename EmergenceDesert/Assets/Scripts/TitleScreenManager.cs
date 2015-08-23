@@ -10,11 +10,14 @@ public class TitleScreenManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+	    if(Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
 	}
 
     public void StartGame()
     {
-        Application.LoadLevel(1);
+        Application.LoadLevel(2);
     }
 }
