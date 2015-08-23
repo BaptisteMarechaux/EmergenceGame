@@ -122,7 +122,7 @@ public class GameManager : MonoBehaviour {
 				littleCube.AddComponent(typeof(BlockLife));
 				littleCube.transform.position = new Vector3(cube.transform.position.x, 0.1f, cube.transform.position.z);
 				buildTime = 0;
-				Debug.Log(nearBlocks.Count.ToString() + "  " + buildTime);
+				//Debug.Log(nearBlocks.Count.ToString() + "  " + buildTime);
 			}
 		} else
 			buildTime = 0;

@@ -28,6 +28,9 @@ public class SunManager : MonoBehaviour {
     [SerializeField]
     Text waterSourcesDispoText;
 
+	[SerializeField]
+	Text foodSourcesDispoText;
+
     bool startedPlacingWater;
 	bool canPlacingWater;
     Vector3 selectedPosition;
@@ -50,7 +53,8 @@ public class SunManager : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        waterSourcesDispoText.text = "Sources Dispo : " + disponibleWaterSources;
+        waterSourcesDispoText.text = "Sources Available : " + disponibleWaterSources;
+		foodSourcesDispoText.text = "Food Available : " + foodSources.Length.ToString();
         t = 0;
     }
 	
@@ -118,8 +122,7 @@ public class SunManager : MonoBehaviour {
 								break;
 							}
 						}
-						//disponibleWaterSources--;
-						//waterSourcesDispoText.text = "Sources Dispo : " + disponibleWaterSources.ToString();
+						disponibleFoodSources--;
 					}
 				}else
 					canPlacingWater = true;
@@ -136,6 +139,13 @@ public class SunManager : MonoBehaviour {
                 
         }
         
+		int foods=0;
+		for (int i = 0; i < foodSources.Length; i++)
+		{
+			if (!foodSources[i].activeSelf)
+				foods++;
+		}
+		foodSourcesDispoText.text = "Sources Dispo : " + foods.ToString();
 
         if (startedPlacingWater)
         {
